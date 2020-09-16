@@ -1,5 +1,22 @@
 # AFD
 
+UNIFOR
+
+Data de Criação: 14/09/2020
+
+Disciplina: T291 – Aspectos Teóricos da Computação
+
+### Alunos: 
+
+- Divaldo Aderaldo de Oliveira Júnior (1810534)
+
+- 
+
+### Descrição: 
+Projeto sobre autômatos finitos determinísticos para fins avaliativos.
+
+# Angular
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.20.
 
 ## Development server
