@@ -2,15 +2,13 @@ import { Instrucao } from './instrucao';
 
 export class Fonte {
   private fita: string[];
-  // TODO: Tornar private após todos os testes
-  fitaOriginal: string[];
+  private fitaOriginal: string[];
   private conjuntoInstrucoes: Instrucao[];
   private conjuntoEstados: string[];
   private conjuntoEstadosFinais: string[];
 
   constructor($fita: string[], $conjuntoInstrucoes: Instrucao[], $conjuntoEstados: string[], $conjuntoEstadosFinais: string[]) {
     this.fita = $fita;
-    // TODO: Criar nova instância para this.fitaOriginal (Atual é modificada junto de this.fita)
     this.fitaOriginal = new Array(...$fita);
     this.conjuntoInstrucoes = $conjuntoInstrucoes;
     this.conjuntoEstados = $conjuntoEstados;
