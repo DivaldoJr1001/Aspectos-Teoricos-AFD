@@ -27,9 +27,32 @@ $toolbarHeight: 3rem;
     justify-content: center;
 
     .reader-container {
-      height: 6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 10rem;
       width: 100%;
       background-color: #c4c4c4;
+
+      .message {
+        font-size: x-large;
+      }
+
+      .info-display {
+        display: flex;
+        flex-direction: column;
+
+        .static-info {
+          font-size: larger;
+          font-weight: bold;
+          margin-bottom: 1rem;
+        }
+
+        .realtime-info {
+          display: grid;
+          grid-template-columns: auto auto;
+        }
+      }
     }
 
     .fita-container {

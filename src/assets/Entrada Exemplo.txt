@@ -1,0 +1,12 @@
+nome Programa Fonte Unifor
+fita 1011
+estados qi,q1,qf
+init qi
+accept qf
+
+qi,1,qi,1,>
+qi,0,qi,0,>
+qi,_,q1,Y,<
+q1,1,q1,1,<
+q1,0,q1,0,<
+q1,_,qf,X,>

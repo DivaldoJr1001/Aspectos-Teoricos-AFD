@@ -5,7 +5,33 @@
 
   <div class="machine-body">
     <div class="reader-container">
-
+      <div class="message" *ngIf="!fileImported">
+        Import a file to begin.
+      </div>
+      <div class="message" *ngIf="fileInvalid">
+        The file you attempted to import wasn't valid.
+      </div>
+      <div class="info-display" *ngIf="fileImported && !fileInvalid">
+        <div class="static-info">
+          <div>Name: {{fonte.$nome}}</div>
+          <div>States: {{fonte.$estados}}</div>
+          <div>Accepted States: {{fonte.$estadosFinais}}</div>
+        </div>
+        <div class="realtime-info">
+          <div>Current State: {{estadoAtual}}</div>
+          <div>Next State:
+            <span *ngIf="proximaInstrucao !== undefined; else finishedRun">{{proximaInstrucao.$proximoEstado}}</span>
+          </div>
+          <div>Reading: {{fonte.$fita[slotAtual]}}</div>
+          <div>Writing:
+            <span *ngIf="proximaInstrucao !== undefined; else finishedRun">{{proximaInstrucao.$novoCaractere}}</span>
+          </div>
+          <div>Next Movement:
+            <span *ngIf="proximaInstrucao !== undefined; else finishedRun">{{proximaInstrucao.$movimento}}</span>
+          </div>
+          <ng-template #finishedRun>None</ng-template>
+        </div>
+      </div>
     </div>
 
     <div #fitaContainer class="fita-container">
@@ -22,14 +48,14 @@
     </div>
 
     <div class="buttons-container">
-      <button mat-raised-button (click)="run()" [disabled]="!fileImported || machineRunning || machineFinished">Run</button>
+      <button mat-raised-button (click)="run()" [disabled]="!fileImported || fileInvalid || machineRunning || machineFinished">Run</button>
       <button mat-raised-button color="warn" (click)="stop()" [disabled]="!machineRunning">Stop</button>
       <button mat-raised-button (click)="reset()" [disabled]="machineRunning || machineInitialState">Reset</button>
     </div>
 
-    <!--TODO: Importar arquivo .txt-->
     <div class="file-container">
-      <button mat-raised-button (click)="readData('textoDoArquivo')" [disabled]="machineRunning">Read File</button>
+      <input #txtInput hidden="true" type="file" onclick="this.value=null" (change)="readData($event)" accept=".txt" />
+      <button mat-raised-button color="primary" (click)="txtInput.click()" [disabled]="machineRunning">Import File</button>
     </div>
   </div>
 
@@ -43,4 +69,3 @@
     </div>
   </div>
 </div>
-

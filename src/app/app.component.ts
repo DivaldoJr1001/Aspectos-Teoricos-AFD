@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { AFD } from './models/afd';
+import { AFD } from './machine/afd';
 import { Fonte } from './models/fonte';
-import { DataReader } from './utils/dataReader';
+import { Instrucao } from './models/instrucao';
 
 @Component({
   selector: 'app-root',
@@ -14,9 +14,8 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('fitaContainer', { static: true }) public fitaContainer: ElementRef<any>;
   @ViewChild('pointer', { static: true }) public pointer: ElementRef<any>;
 
-  maquinaAFD = new AFD(['0', '1', '*']);
-  dReader = new DataReader(500);
-  fonte: Fonte = this.dReader.defaultFonte();
+  maquinaAFD = new AFD(['0', '1', 'X', 'Y'], 500);
+  fonte: Fonte = this.maquinaAFD.fonteVazia();
 
   // Tamanho dos containers
   slotWidth = 144;
@@ -26,25 +25,40 @@ export class AppComponent implements AfterViewInit {
   machineFinished = false;
   machineRunning = false;
   machineInitialState = true;
+
   loading = false;
   fileImported = false;
+  fileInvalid = false;
 
-  // Referenta à velocidade do ponteiro
+  // Referente à velocidade do ponteiro
   movingDelay = 5;
 
   // Onde o ponteiro se encontra
-  currentSlot: number;
+  slotAtual: number;
+
+  estadoAtual: string;
+  proximaInstrucao: Instrucao | undefined;
+
 
   // Centraliza a scrollbar
   ngAfterViewInit(): void {
     this.prepareView();
   }
 
-  async readData(uploadedData: string): Promise<void> {
-    this.loading = true;
+  async readData(fileInputEvent: any): Promise<void> {
+    const file: File = fileInputEvent.target.files[0];
+    let fileText: string;
 
-    this.fonte = this.dReader.read(uploadedData);
+    await Promise.all([
+      file.text()
+    ]).then(([text]) => {
+      fileText = text;
+    });
+
+    this.loading = true;
+    this.fonte = this.maquinaAFD.read(fileText);
     await this.delay(1000);
+    this.fileInvalid = !this.fonte.$valida;
     this.fileImported = true;
     this.reset();
 
@@ -52,7 +66,9 @@ export class AppComponent implements AfterViewInit {
   }
 
   async moveLeft(): Promise<void> {
-    if (this.currentSlot > 0 && this.machineRunning) {
+    if (this.slotAtual > 0 && this.machineRunning) {
+      this.slotAtual--;
+      this.getProximaInstrucao();
       const originalMargin = this.pointer.nativeElement.style.marginLeft.split('px')[0];
       const newMargin = Number(originalMargin) - this.distanceBetweenSlotsPx;
 
@@ -60,13 +76,13 @@ export class AppComponent implements AfterViewInit {
         this.pointer.nativeElement.style.marginLeft = (Number(this.pointer.nativeElement.style.marginLeft.split('px')[0]) - 1) + 'px';
         await this.delay(this.movingDelay);
       }
-
-      this.currentSlot--;
     }
   }
 
   async moveRight(): Promise<void> {
-    if (this.currentSlot < this.fonte.$fita.length - 1 && this.machineRunning) {
+    if (this.slotAtual < this.fonte.$fita.length - 1 && this.machineRunning) {
+      this.slotAtual++;
+      this.getProximaInstrucao();
       const originalMargin = this.pointer.nativeElement.style.marginLeft.split('px')[0];
       const newMargin = Number(originalMargin) + this.distanceBetweenSlotsPx;
 
@@ -74,10 +90,6 @@ export class AppComponent implements AfterViewInit {
         this.pointer.nativeElement.style.marginLeft = (Number(this.pointer.nativeElement.style.marginLeft.split('px')[0]) + 1) + 'px';
         await this.delay(this.movingDelay);
       }
-
-      this.currentSlot++;
-      // TODO: Teste de sobrescrita, excluir quando importanção de arquivos estiver completa
-      this.fonte.$fita[this.currentSlot] = '5';
     }
   }
 
@@ -85,17 +97,35 @@ export class AppComponent implements AfterViewInit {
     this.machineRunning = true;
     this.machineInitialState = false;
 
-    // TODO: Seguir as instruções da fonte importada em arquivo .txt
-    await this.moveRight();
-    await this.moveRight();
-    await this.moveRight();
-    await this.moveLeft();
+    await this.doProximaInstrucao();
 
     this.machineRunning = false;
     this.machineFinished = true;
   }
 
-  stop(): void {
+  async doProximaInstrucao(): Promise<void> {
+    console.log(this.proximaInstrucao.$movimento as string === '>' as string);
+    this.fonte.$fita[this.slotAtual] = this.proximaInstrucao.$novoCaractere;
+    this.estadoAtual = this.proximaInstrucao.$proximoEstado;
+
+    if (this.proximaInstrucao.$movimento.includes('>')) {
+      await this.moveRight();
+    } else if (this.proximaInstrucao.$movimento.includes('<')) {
+      await this.moveLeft();
+    }
+
+    if (!this.fonte.$estadosFinais.includes(this.estadoAtual) && this.proximaInstrucao !== undefined && this.machineRunning) {
+      await this.doProximaInstrucao();
+    }
+  }
+
+  getProximaInstrucao(): void {
+    const estadoNumero = this.fonte.$estados.findIndex(estado => estado === this.estadoAtual);
+    const caractereNumero = this.maquinaAFD.$alfabeto.findIndex(character => character === this.fonte.$fita[this.slotAtual]);
+    this.proximaInstrucao = this.fonte.$instrucoes[estadoNumero][caractereNumero];
+  }
+
+  async stop(): Promise<void> {
     this.machineRunning = false;
     this.machineFinished = true;
   }
@@ -105,11 +135,16 @@ export class AppComponent implements AfterViewInit {
     this.machineRunning = false;
     this.machineInitialState = true;
 
+    this.estadoAtual = this.fonte.$estadoInicial;
     this.fonte.resetFita();
 
-    this.currentSlot = this.dReader.$surroundingSlots;
+    this.slotAtual = this.maquinaAFD.$surroundingSlots;
     this.pointer.nativeElement.style.marginLeft = '0px';
     this.prepareView();
+
+    if (this.fileImported && !this.fileInvalid) {
+      this.getProximaInstrucao();
+    }
   }
 
   prepareView(): void {
@@ -119,8 +154,8 @@ export class AppComponent implements AfterViewInit {
 
     const pointerWidth = this.pointer.nativeElement.offsetWidth;
 
-    const pointerMargin = this.fileImported ? - (pointerWidth / 2) + (this.slotWidth / 2) +
-      this.distanceBetweenSlotsPx * this.dReader.$surroundingSlots : - (pointerWidth / 2);
+    const pointerMargin = this.fileImported && !this.fileInvalid ? - (pointerWidth / 2) + (this.slotWidth / 2) +
+      this.distanceBetweenSlotsPx * this.maquinaAFD.$surroundingSlots : - (pointerWidth / 2);
     this.pointer.nativeElement.style.marginLeft = pointerMargin + 'px';
 
   }
