@@ -1,0 +1,37 @@
+nome Dobra de Entrada
+fita 101
+estados search,carry0,carry1,check,reset,replace,end
+init search
+accept end
+
+search,0,carry0,X,>
+search,1,carry1,Y,>
+search,X,search,X,>
+search,Y,search,Y,>
+
+carry0,0,carry0,0,>
+carry0,1,carry0,1,>
+carry0,X,carry0,X,>
+carry0,Y,carry0,Y,>
+carry0,_,check,X,<
+
+carry1,0,carry1,0,>
+carry1,1,carry1,1,>
+carry1,X,carry1,X,>
+carry1,Y,carry1,Y,>
+carry1,_,check,Y,<
+
+check,0,reset,0,<
+check,1,reset,1,<
+check,X,check,X,<
+check,Y,check,Y,<
+check,_,replace,_,>
+
+reset,0,reset,0,<
+reset,1,reset,1,<
+reset,X,search,X,>
+reset,Y,search,Y,>
+
+replace,X,replace,0,>
+replace,Y,replace,1,>
+replace,_,end,_,<

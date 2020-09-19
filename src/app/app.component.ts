@@ -65,26 +65,6 @@ export class AppComponent implements AfterViewInit {
     this.loading = false;
   }
 
-  async moveLeft(): Promise<void> {
-    const originalMargin = this.pointer.nativeElement.style.marginLeft.split('px')[0];
-    const newMargin = Number(originalMargin) - this.distanceBetweenSlotsPx;
-
-    while (this.pointer.nativeElement.style.marginLeft.split('px')[0] > newMargin && this.machineRunning) {
-      this.pointer.nativeElement.style.marginLeft = (Number(this.pointer.nativeElement.style.marginLeft.split('px')[0]) - 1) + 'px';
-      await this.delay(this.movingDelay);
-    }
-  }
-
-  async moveRight(): Promise<void> {
-    const originalMargin = this.pointer.nativeElement.style.marginLeft.split('px')[0];
-    const newMargin = Number(originalMargin) + this.distanceBetweenSlotsPx;
-
-    while (this.pointer.nativeElement.style.marginLeft.split('px')[0] < newMargin && this.machineRunning) {
-      this.pointer.nativeElement.style.marginLeft = (Number(this.pointer.nativeElement.style.marginLeft.split('px')[0]) + 1) + 'px';
-      await this.delay(this.movingDelay);
-    }
-  }
-
   async run(): Promise<void> {
     this.machineRunning = true;
     this.machineInitialState = false;
@@ -95,9 +75,31 @@ export class AppComponent implements AfterViewInit {
     this.machineFinished = true;
   }
 
+  async stop(): Promise<void> {
+    this.machineRunning = false;
+    this.machineFinished = true;
+  }
+
+  reset(): void {
+    this.machineFinished = false;
+    this.machineRunning = false;
+    this.machineInitialState = true;
+
+    this.estadoAtual = this.fonte.$estadoInicial;
+    this.fonte.resetFita();
+
+    this.slotAtual = this.maquinaAFD.$surroundingSlots;
+    this.pointer.nativeElement.style.marginLeft = '0px';
+    this.prepareView();
+
+    if (this.fileImported && !this.fileInvalid) {
+      this.getProximaInstrucao();
+    }
+  }
+
   async doProximaInstrucao(): Promise<void> {
-    this.fonte.$fita[this.slotAtual] = this.proximaInstrucao.$novoCaractere;
     this.estadoAtual = this.proximaInstrucao.$proximoEstado;
+    this.fonte.$fita[this.slotAtual] = this.proximaInstrucao.$novoCaractere;
 
     if (this.proximaInstrucao.$movimento.includes('>') && this.slotAtual < this.fonte.$fita.length - 1 && this.machineRunning) {
       this.slotAtual++;
@@ -123,25 +125,23 @@ export class AppComponent implements AfterViewInit {
     this.proximaInstrucao = this.fonte.$instrucoes[estadoNumero][caractereNumero];
   }
 
-  async stop(): Promise<void> {
-    this.machineRunning = false;
-    this.machineFinished = true;
+  async moveLeft(): Promise<void> {
+    const originalMargin = this.pointer.nativeElement.style.marginLeft.split('px')[0];
+    const newMargin = Number(originalMargin) - this.distanceBetweenSlotsPx;
+
+    while (this.pointer.nativeElement.style.marginLeft.split('px')[0] > newMargin && this.machineRunning) {
+      this.pointer.nativeElement.style.marginLeft = (Number(this.pointer.nativeElement.style.marginLeft.split('px')[0]) - 1) + 'px';
+      await this.delay(this.movingDelay);
+    }
   }
 
-  reset(): void {
-    this.machineFinished = false;
-    this.machineRunning = false;
-    this.machineInitialState = true;
+  async moveRight(): Promise<void> {
+    const originalMargin = this.pointer.nativeElement.style.marginLeft.split('px')[0];
+    const newMargin = Number(originalMargin) + this.distanceBetweenSlotsPx;
 
-    this.estadoAtual = this.fonte.$estadoInicial;
-    this.fonte.resetFita();
-
-    this.slotAtual = this.maquinaAFD.$surroundingSlots;
-    this.pointer.nativeElement.style.marginLeft = '0px';
-    this.prepareView();
-
-    if (this.fileImported && !this.fileInvalid) {
-      this.getProximaInstrucao();
+    while (this.pointer.nativeElement.style.marginLeft.split('px')[0] < newMargin && this.machineRunning) {
+      this.pointer.nativeElement.style.marginLeft = (Number(this.pointer.nativeElement.style.marginLeft.split('px')[0]) + 1) + 'px';
+      await this.delay(this.movingDelay);
     }
   }
 
