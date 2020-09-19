@@ -1,5 +1,46 @@
 <div class="app-container">
-  <span>Atividade {{title}}</span>
+  <mat-toolbar>
+    <span>Turing Machine Simulator - UNIFOR</span>
+  </mat-toolbar>
 
-  <div class="teste"></div>
+  <div class="machine-body">
+    <div class="reader-container">
+
+    </div>
+
+    <div #fitaContainer class="fita-container">
+      <div class="pointer-track">
+        <div #pointer class="pointer">
+          <mat-icon>arrow_downward</mat-icon>
+        </div>
+      </div>
+      <div class="slots-container">
+        <div class="slot" *ngFor="let slot of fonte.$fita">
+          {{slot}}
+        </div>
+      </div>
+    </div>
+
+    <div class="buttons-container">
+      <button mat-raised-button (click)="run()" [disabled]="!fileImported || machineRunning || machineFinished">Run</button>
+      <button mat-raised-button color="warn" (click)="stop()" [disabled]="!machineRunning">Stop</button>
+      <button mat-raised-button (click)="reset()" [disabled]="machineRunning || machineInitialState">Reset</button>
+    </div>
+
+    <!--TODO: Importar arquivo .txt-->
+    <div class="file-container">
+      <button mat-raised-button (click)="readData('textoDoArquivo')" [disabled]="machineRunning">Read File</button>
+    </div>
+  </div>
+
+  <mat-toolbar>
+    Alunos: Divaldo Aderaldo de Oliveira Júnior (1810534), Mario Massari (1810538)
+  </mat-toolbar>
+
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-box">
+      Loading...
+    </div>
+  </div>
 </div>
+
