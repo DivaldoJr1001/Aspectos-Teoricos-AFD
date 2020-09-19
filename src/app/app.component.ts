@@ -66,30 +66,22 @@ export class AppComponent implements AfterViewInit {
   }
 
   async moveLeft(): Promise<void> {
-    if (this.slotAtual > 0 && this.machineRunning) {
-      this.slotAtual--;
-      this.getProximaInstrucao();
-      const originalMargin = this.pointer.nativeElement.style.marginLeft.split('px')[0];
-      const newMargin = Number(originalMargin) - this.distanceBetweenSlotsPx;
+    const originalMargin = this.pointer.nativeElement.style.marginLeft.split('px')[0];
+    const newMargin = Number(originalMargin) - this.distanceBetweenSlotsPx;
 
-      while (this.pointer.nativeElement.style.marginLeft.split('px')[0] > newMargin && this.machineRunning) {
-        this.pointer.nativeElement.style.marginLeft = (Number(this.pointer.nativeElement.style.marginLeft.split('px')[0]) - 1) + 'px';
-        await this.delay(this.movingDelay);
-      }
+    while (this.pointer.nativeElement.style.marginLeft.split('px')[0] > newMargin && this.machineRunning) {
+      this.pointer.nativeElement.style.marginLeft = (Number(this.pointer.nativeElement.style.marginLeft.split('px')[0]) - 1) + 'px';
+      await this.delay(this.movingDelay);
     }
   }
 
   async moveRight(): Promise<void> {
-    if (this.slotAtual < this.fonte.$fita.length - 1 && this.machineRunning) {
-      this.slotAtual++;
-      this.getProximaInstrucao();
-      const originalMargin = this.pointer.nativeElement.style.marginLeft.split('px')[0];
-      const newMargin = Number(originalMargin) + this.distanceBetweenSlotsPx;
+    const originalMargin = this.pointer.nativeElement.style.marginLeft.split('px')[0];
+    const newMargin = Number(originalMargin) + this.distanceBetweenSlotsPx;
 
-      while (this.pointer.nativeElement.style.marginLeft.split('px')[0] < newMargin && this.machineRunning) {
-        this.pointer.nativeElement.style.marginLeft = (Number(this.pointer.nativeElement.style.marginLeft.split('px')[0]) + 1) + 'px';
-        await this.delay(this.movingDelay);
-      }
+    while (this.pointer.nativeElement.style.marginLeft.split('px')[0] < newMargin && this.machineRunning) {
+      this.pointer.nativeElement.style.marginLeft = (Number(this.pointer.nativeElement.style.marginLeft.split('px')[0]) + 1) + 'px';
+      await this.delay(this.movingDelay);
     }
   }
 
@@ -104,14 +96,20 @@ export class AppComponent implements AfterViewInit {
   }
 
   async doProximaInstrucao(): Promise<void> {
-    console.log(this.proximaInstrucao.$movimento as string === '>' as string);
     this.fonte.$fita[this.slotAtual] = this.proximaInstrucao.$novoCaractere;
     this.estadoAtual = this.proximaInstrucao.$proximoEstado;
 
-    if (this.proximaInstrucao.$movimento.includes('>')) {
+    if (this.proximaInstrucao.$movimento.includes('>') && this.slotAtual < this.fonte.$fita.length - 1 && this.machineRunning) {
+      this.slotAtual++;
+      this.getProximaInstrucao();
       await this.moveRight();
-    } else if (this.proximaInstrucao.$movimento.includes('<')) {
+    } else if (this.proximaInstrucao.$movimento.includes('<') && this.slotAtual > 0 && this.machineRunning) {
+      this.slotAtual--;
+      this.getProximaInstrucao();
       await this.moveLeft();
+    } else if (this.proximaInstrucao.$movimento.includes('=')) {
+      this.getProximaInstrucao();
+      await this.delay(1000);
     }
 
     if (!this.fonte.$estadosFinais.includes(this.estadoAtual) && this.proximaInstrucao !== undefined && this.machineRunning) {

@@ -1,5 +1,5 @@
 nome Programa Fonte Unifor
-fita 1011
+fita 10111
 estados qi,q1,qf
 init qi
 accept qf
