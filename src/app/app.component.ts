@@ -75,15 +75,9 @@ export class AppComponent implements AfterViewInit {
         await this.delay(this.movingDelay);
       }
 
+      this.currentSlot++;
       // TODO: Teste de sobrescrita, excluir quando importanção de arquivos estiver completa
-      if (this.machineRunning) {
-        this.currentSlot++;
-
-        this.fonte.$fita[this.currentSlot] = '5';
-
-        console.log(this.fonte.$fita[this.currentSlot]);
-        console.log(this.fonte.fitaOriginal[this.currentSlot]);
-      }
+      this.fonte.$fita[this.currentSlot] = '5';
     }
   }
 
