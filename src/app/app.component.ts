@@ -46,7 +46,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   async readData(fileInputEvent: any): Promise<void> {
-    const file: File = fileInputEvent.target.files[0];
+    const file: any = fileInputEvent.target.files[0];
     let fileText: string;
 
     await Promise.all([
