@@ -1,4 +1,6 @@
 nome Dobra de Entrada
+alfabetoMaquina 0,1,X,Y
+alfabetoFita <,>,=,_
 fita 101
 estados search,carry0,carry1,check,reset,replace,end
 init search

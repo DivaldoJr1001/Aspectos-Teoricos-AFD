@@ -14,7 +14,7 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('fitaContainer', { static: true }) public fitaContainer: ElementRef<any>;
   @ViewChild('pointer', { static: true }) public pointer: ElementRef<any>;
 
-  maquinaAFD = new AFD(['0', '1', 'X', 'Y'], 500);
+  maquinaAFD = new AFD(500);
   fonte: Fonte = this.maquinaAFD.fonteVazia();
 
   // Tamanho dos containers
@@ -101,15 +101,16 @@ export class AppComponent implements AfterViewInit {
     this.estadoAtual = this.proximaInstrucao.$proximoEstado;
     this.fonte.$fita[this.slotAtual] = this.proximaInstrucao.$novoCaractere;
 
-    if (this.proximaInstrucao.$movimento.includes('>') && this.slotAtual < this.fonte.$fita.length - 1 && this.machineRunning) {
+    if (this.proximaInstrucao.$movimento.includes(this.fonte.$moverDireita) && this.slotAtual < this.fonte.$fita.length - 1
+      && this.machineRunning) {
       this.slotAtual++;
       this.getProximaInstrucao();
       await this.moveRight();
-    } else if (this.proximaInstrucao.$movimento.includes('<') && this.slotAtual > 0 && this.machineRunning) {
+    } else if (this.proximaInstrucao.$movimento.includes(this.fonte.$moverEsquerda) && this.slotAtual > 0 && this.machineRunning) {
       this.slotAtual--;
       this.getProximaInstrucao();
       await this.moveLeft();
-    } else if (this.proximaInstrucao.$movimento.includes('=')) {
+    } else if (this.proximaInstrucao.$movimento.includes(this.fonte.$permanecerParado)) {
       this.getProximaInstrucao();
       await this.delay(1000);
     }
@@ -121,7 +122,7 @@ export class AppComponent implements AfterViewInit {
 
   getProximaInstrucao(): void {
     const estadoNumero = this.fonte.$estados.findIndex(estado => estado === this.estadoAtual);
-    const caractereNumero = this.maquinaAFD.$alfabeto.findIndex(character => character === this.fonte.$fita[this.slotAtual]);
+    const caractereNumero = this.fonte.$alfabetoMaquina.findIndex(character => character === this.fonte.$fita[this.slotAtual]);
     this.proximaInstrucao = this.fonte.$instrucoes[estadoNumero][caractereNumero];
   }
 

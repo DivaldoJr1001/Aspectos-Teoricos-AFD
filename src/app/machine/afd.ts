@@ -2,29 +2,15 @@ import { DataReader } from '../utils/dataReader';
 import { Fonte } from '../models/fonte';
 
 export class AFD {
-  private caracteresGlobais = ['_'];
-  private alfabeto: string[] = [];
-
-  // O número de espaços para a direita e esquerda da fita importada
+  // O número de espaços para a direita e esquerda da fita importada, permitindo mais movimentos
   private surroundingSlots: number;
 
+  // A classe responsável por ler a fonte
   private dReader: DataReader;
 
-  constructor($alfabeto: string[], $surroundingSlots: number) {
-    // Adiciona os caracteres globais
-    const alfabeto = $alfabeto.concat(this.caracteresGlobais);
-    // Garante que o alfabeto final não terá caracteres duplicados com Set, que ignora duplicatas
-    new Set(alfabeto).forEach(character => {
-      this.alfabeto.push(character);
-    });
-
-
+  constructor($surroundingSlots: number) {
     this.surroundingSlots = $surroundingSlots;
-    this.dReader = new DataReader(this.alfabeto);
-  }
-
-  public get $alfabeto(): string[] {
-    return this.alfabeto;
+    this.dReader = new DataReader();
   }
 
   public get $surroundingSlots(): number {

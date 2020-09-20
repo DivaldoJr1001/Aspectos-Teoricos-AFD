@@ -1,4 +1,6 @@
 nome Programa Fonte Unifor
+alfabetoMaquina 0,1,X,Y
+alfabetoFita <,>,=,_
 fita 10111
 estados qi,q1,qf
 init qi
