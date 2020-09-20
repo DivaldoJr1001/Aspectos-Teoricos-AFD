@@ -36,4 +36,4 @@ reset,Y,search,Y,>
 
 replace,X,replace,0,>
 replace,Y,replace,1,>
-replace,_,end,_,<
+replace,_,end,_,=

@@ -1,0 +1,17 @@
+nome Termina em 01
+alfabetoMaquina 0,1
+alfabetoFita <,>,=,_
+fita 1101
+estados goToEnd,check0,check1,success,failure
+init goToEnd
+accept success,failure
+
+goToEnd,0,goToEnd,0,>
+goToEnd,1,goToEnd,1,>
+goToEnd,_,check1,_,<
+
+check1,0,failure,0,=
+check1,1,check0,1,<
+
+check0,0,success,0,=
+check0,1,failure,1,=
