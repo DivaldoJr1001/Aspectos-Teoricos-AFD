@@ -36,13 +36,14 @@ export class DataReader {
       return false;
     }
 
-    // Identifica as entradas específicas do alfabeto da fita
+    // Identifica as entradas específicas do alfabeto da fita, com símbolos para identificar movimentos e um espaço vazio
     const moverEsquerda = alfabetoFita[0];
     const moverDireita = alfabetoFita[1];
     const permanecerParado = alfabetoFita[2];
     const espacoVazio = alfabetoFita[3];
 
-    // Insere o espaço vazio designado no alfabeto da máquina para permitir seu uso como variável na fita
+    // Insere símbolo de o espaço vazio no alfabeto da máquina para habilitar seu uso como variável nas instruções,
+    // e o retira do alfabeto da fita para manter apenas os símbolos de movimento
     alfabetoMaquina.push(alfabetoFita.pop());
 
     const fitaArray = infoLineArrays.find(array => array[0] === 'fita');
@@ -50,10 +51,10 @@ export class DataReader {
       return false;
     }
     const fita = fitaArray[1].split('').map(element => element.trim());
-    // Checa se toda a entrada da fita existe no alfabeto da máquina
+    // Checa se há um espaço vazio ou algum caractere desconhecido na fita de entrada, invalidando-a
     // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < fita.length; i++) {
-      if (!alfabetoMaquina.includes(fita[i])) {
+      if (fita[i] === espacoVazio || !alfabetoMaquina.includes(fita[i])) {
         return false;
       }
     }
