@@ -15,3 +15,4 @@ check1,1,check0,1,<
 
 check0,0,success,0,=
 check0,1,failure,1,=
+check0,_,failure,_,=
