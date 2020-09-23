@@ -11,7 +11,7 @@ multiplo,1,q1,1,>
 multiplo,_,true,_,=
 
 q1,0,q2,0,>
-q1,1,q3,q,>
+q1,1,q3,1,>
 q1,_,false,_,=
 
 q2,0,q4,0,>

@@ -1,4 +1,4 @@
-nome Termina em 01
+nome Incremento
 alfabetoMaquina 0,1
 alfabetoFita <,>,=,_
 fita 1101
