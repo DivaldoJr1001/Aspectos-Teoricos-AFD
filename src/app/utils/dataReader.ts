@@ -8,7 +8,8 @@ export class DataReader {
     // Divide as primeiras 7 linhas com informações básicas em arrays de 2 com regex
     const infoLineArrays = textLines.slice(0, 7).map(line => line.split(/ (.+)/, 2));
     // Divide todas as linhas com instruções em arrays de 5 e ignora as que não se encaixam
-    const instructionLineArrays = textLines.slice(7).map(line => line.split(',')).filter(lineArray => lineArray.length === 5);
+    const instructionLineArrays = textLines.slice(7).map(line => line.split(',')).filter(lineArray => lineArray.length === 5)
+      .map(instructionLine => instructionLine.map(element => element.trim()));
 
     // CHECAGEM/VALIDAÇÃO DE INFORMAÇÕES BÁSICAS
 
@@ -68,7 +69,7 @@ export class DataReader {
     if (estadosArray === undefined || estadosArray[1] === undefined) {
       return false;
     }
-    const estados = estadosArray[1].split(',');
+    const estados = estadosArray[1].split(',').map(element => element.trim());
     if (this.isEmptyOrHasDuplicates(estados)) {
       return false;
     }
@@ -125,9 +126,6 @@ export class DataReader {
       const estado2Numero = estados.findIndex(estado => estado === instrucao[2]);
       const caractere2Numero = alfabetoMaquina.findIndex(character => character === instrucao[3]);
       const actionNumero = alfabetoFita.findIndex(action => action === instrucao[4]);
-
-      console.log(instrucao[2]);
-      console.log(estado2Numero);
 
       // Se um estado, caractere ou ação da instrução não existir, a entrada é inválida
       if (estado1Numero === -1 || caractere1Numero === -1 ||
