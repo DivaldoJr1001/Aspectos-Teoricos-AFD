@@ -6,7 +6,7 @@ estados multiplo,q1,q2,q3,q4,true,false
 init multiplo
 accept true,false
 
-multiplo,0,q0,0,>
+multiplo,0,multiplo,0,>
 multiplo,1,q1,1,>
 multiplo,_,true,_,=
 
