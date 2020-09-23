@@ -126,10 +126,13 @@ export class DataReader {
       const caractere2Numero = alfabetoMaquina.findIndex(character => character === instrucao[3]);
       const actionNumero = alfabetoFita.findIndex(action => action === instrucao[4]);
 
+      console.log(instrucao[2]);
+      console.log(estado2Numero);
+
       // Se um estado, caractere ou ação da instrução não existir, a entrada é inválida
-      if (estado1Numero === undefined || caractere1Numero === undefined ||
-        estado2Numero === undefined || caractere2Numero === undefined ||
-        actionNumero === undefined) {
+      if (estado1Numero === -1 || caractere1Numero === -1 ||
+        estado2Numero === -1 || caractere2Numero === -1 ||
+        actionNumero === -1) {
         return false;
       }
 
