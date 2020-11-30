@@ -1,8 +1,6 @@
 # AFD
 
-UNIFOR
-
-Data de Criação: 14/09/2020
+Universidade de Fortaleza (UNIFOR), 2020.2
 
 Disciplina: T291 – Aspectos Teóricos da Computação
 
@@ -10,7 +8,7 @@ Disciplina: T291 – Aspectos Teóricos da Computação
 
 - Divaldo Aderaldo de Oliveira Júnior (1810534)
 
-- 
+- Mario Massari (1810538)
 
 ### Descrição: 
 Projeto sobre autômatos finitos determinísticos para fins avaliativos.
